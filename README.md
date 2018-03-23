@@ -15,10 +15,11 @@ java com.github.mselivanov.portscanner.PortScanner
 
 Application uses by default:
 * localhost as host name
-* 0-65535 as a port range
+* 0 as a start port
+* 65535 as an end range
 * console as an output destination
 
 ### Scan ports in a particular range of a host and outputs results to file
 ```bash
-java com.github.mselivanov.portscanner.PortScanner --host www.yahoo.com --ports 0-1023 --file c:/Tmp/ports.txt
+java com.github.mselivanov.portscanner.PortScanner --host www.yahoo.com --startport 0 --endport 1023 --file c:/Tmp/ports.txt
 ```
