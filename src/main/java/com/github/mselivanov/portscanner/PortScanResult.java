@@ -25,4 +25,9 @@ public class PortScanResult {
     public PortScanStatus getPortScanStatus() {
         return portScanStatus;
     }
+    
+    @Override
+    public String toString() {
+        return String.format("Host: %s port %d is %s", getHost(), getPort(), getPortScanStatus());
+    }
 }
