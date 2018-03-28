@@ -20,16 +20,18 @@ public class PortScannerParameters {
     public static final InetAddress DEFAULT_HOST = InetAddress.getLoopbackAddress();
     public static final OutputDestination DEFAULT_DESTINATION = OutputDestination.CONSOLE;
     public static final Optional<Path> DEFAULT_FILEPATH = Optional.empty();
+    public static final int DEFAULT_TIMEOUT = 500;
     
     private InetAddress host = DEFAULT_HOST;
     private int startPort = DEFAULT_START_PORT;
     private int endPort = DEFAULT_END_PORT;    
     private OutputDestination outputDestination = DEFAULT_DESTINATION;
     private Optional<Path> outputPath = DEFAULT_FILEPATH;
+    private int timeout = DEFAULT_TIMEOUT;
     
     public PortScannerParameters() {}
     
-    public PortScannerParameters(InetAddress host, int startPort, int endPort, OutputDestination outputDestination, Optional<Path> outputPath) {
+    public PortScannerParameters(InetAddress host, int startPort, int endPort, OutputDestination outputDestination, Optional<Path> outputPath, int timeout) {
         setHost(host);   
         setStartPort(startPort);
         setEndPort(endPort);
@@ -56,6 +58,10 @@ public class PortScannerParameters {
     public Optional<Path> getOutputPath() {
         return outputPath;
     }
+    
+    public int getTimeout() {
+        return timeout;
+    }
 
     public void setStartPort(int startPort) {
         this.startPort = startPort;
@@ -76,6 +82,10 @@ public class PortScannerParameters {
     public void setOutputPath(Optional<Path> outputPath) {
         this.outputPath = outputPath;
     }
+    
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }    
     
     @Override
     public String toString() {

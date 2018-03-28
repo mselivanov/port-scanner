@@ -6,15 +6,14 @@ public class PortScanner {
         PortScannerParameters psp;
         PortScannerParser parser = new PortScannerParser();
         PortScannerEngine engine;
+        OutputFormatter formatter = OutputFormatter.DEFAULT_FORMATTER;
+        ResultWriter writer;
         try {
             psp = parser.parse(args);
-            psp.setStartPort(80);
-            psp.setEndPort(90);
             engine = new PortScannerEngine(psp);
             PortScanResults psr = engine.scan();
-            for(PortScanResult result: psr) {
-                System.out.println(result.toString());
-            }
+            writer = ResultWriterFactory.createResultWriter(psp);
+            writer.writeResults(psr);            
         } catch(ParametersParseException e) {
             parser.printHelp();
         }

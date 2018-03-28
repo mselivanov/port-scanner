@@ -16,7 +16,11 @@ import org.apache.commons.cli.ParseException;
 
 public class PortScannerParser {
 
-    private static final String USAGE_SYNTAX = "java PortScanner [--host <host name or IP> ] [--ports <startPort-endPort>] [--file <path to file to store results>]";
+    private static final String USAGE_SYNTAX = "java PortScanner [-h|--host <host name or IP> ] " +
+                                               "[-sp|--startport <start port>] " +
+                                               "[-ep|--endport <end port>] " +
+                                               "[-t|--timeout <connection timeout in ms>] " +                                               
+                                               "[-f|--file <path to file to store results>]";
     
     private static Options createOptions() {
         Options options = new Options();
@@ -35,6 +39,10 @@ public class PortScannerParser {
         Option file = new Option("f", "file", true, "File to output result of port scanning");
         file.setRequired(false);
         options.addOption(file);
+        
+        Option timeout = new Option("t", "timeout", true, "Connect attempt timeout");
+        timeout.setRequired(false);
+        options.addOption(timeout);
         
         return options;
     } 
@@ -56,6 +64,7 @@ public class PortScannerParser {
             portScannerParameters.setHost(cmd.hasOption("h") ? InetAddress.getByName(cmd.getOptionValue("h")): DEFAULT_HOST);
             portScannerParameters.setOutputDestination(cmd.hasOption("f") ? OutputDestination.FILE : DEFAULT_DESTINATION);
             portScannerParameters.setOutputPath(cmd.hasOption("f") ? Optional.of(Paths.get(cmd.getOptionValue("f"))) : DEFAULT_FILEPATH);            
+            portScannerParameters.setTimeout(cmd.hasOption("t") ? Integer.parseInt(cmd.getOptionValue("t")) : DEFAULT_TIMEOUT);
         } catch(ParseException e) {
             throw new ParametersParseException(e);
         } catch(UnknownHostException e) {

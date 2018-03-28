@@ -33,3 +33,9 @@ dependencies {
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")    
     
 }
+
+run {
+    if(project.hasProperty('myargs')){
+        args(myargs.split('\\s'))
+    }
+}
