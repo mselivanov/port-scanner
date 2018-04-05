@@ -1,5 +1,6 @@
 package com.github.mselivanov.portscanner;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -27,5 +28,21 @@ public class ResultWriterFactoryTest {
     assertTrue(writer.getOutputPath().isPresent());
   }
 
+  @Test
+  public void testFileNotExists() {
+    PortScannerParameters parameters = new PortScannerParameters();
+    parameters.setOutputDestination(OutputDestination.FILE);
+    parameters.setOutputPath(Optional.of(Paths.get("file///Buhaha/unknown path")));
+    assertThrows(IllegalArgumentException.class,
+        () -> ResultWriterFactory.createResultWriter(parameters));
+  }
+
+  @Test
+  public void testUnknownOutputDestination() {
+    PortScannerParameters parameters = new PortScannerParameters();
+    parameters.setOutputDestination(OutputDestination.UNKNOWN);
+    assertThrows(IllegalArgumentException.class,
+        () -> ResultWriterFactory.createResultWriter(parameters));
+  }
 
 }

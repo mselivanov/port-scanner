@@ -2,7 +2,8 @@ package com.github.mselivanov.portscanner;
 
 public enum OutputDestination {
     CONSOLE("console"),
-    FILE("file");
+    FILE("file"),
+    UNKNOWN("unknown");
     
     private final String text;
     
