@@ -76,6 +76,6 @@ public class PortScannerParser {
     public void printHelp() {
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp(USAGE_SYNTAX, options);        
-    } 
+    }
     
 }
