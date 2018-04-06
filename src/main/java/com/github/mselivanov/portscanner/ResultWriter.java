@@ -14,17 +14,11 @@ import static java.util.Optional.of;
 public class ResultWriter {
     
     private PrintStream printStream;
-    private Optional<Path> outputPath = Optional.empty();
-    
+
     public ResultWriter(PrintStream printStream) {
         this.printStream = printStream;
     }
 
-    public ResultWriter(Path outputPath) throws FileNotFoundException {
-      this.printStream = new PrintStream(outputPath.toFile());
-      this.outputPath = Optional.of(outputPath);
-    }
-    
     public void writeResults(PortScanResults results) {
         writeResults(results, DEFAULT_FORMATTER);        
     }
@@ -37,10 +31,6 @@ public class ResultWriter {
 
     public OutputStream getOutputStream() {
         return printStream;
-    }
-
-    public Optional<Path> getOutputPath() {
-      return outputPath;
     }
 
 }

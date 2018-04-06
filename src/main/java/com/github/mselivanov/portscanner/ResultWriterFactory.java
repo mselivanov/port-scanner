@@ -16,12 +16,21 @@ public class ResultWriterFactory {
                 return new ResultWriter(System.out);
             } else if (parameters.getOutputDestination() == OutputDestination.FILE) {
                 Path path = parameters.getOutputPath().get();
-                return new ResultWriter(path);
+                PrintStream printStream = createFileStream(path);
+                return new ResultWriter(printStream);
             } else {
                 throw new IllegalArgumentException(String.format(OUTPUT_DESTINATION_ERROR_MSG, parameters.getOutputDestination()));
             }
         } catch(FileNotFoundException e) {
             throw new IllegalArgumentException(String.format(OUTPUT_PATH_NOT_FOUND_ERROR_MSG, parameters.getOutputPath().get()), e);
         }
+    }
+
+    protected static PrintStream createFileStream(Path outputPath) throws FileNotFoundException {
+        return new PrintStream(fileFromPath(outputPath));
+    }
+
+    protected static File fileFromPath(Path path) {
+      return path.toFile();
     }
 }
