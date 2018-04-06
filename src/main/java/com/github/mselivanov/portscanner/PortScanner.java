@@ -2,35 +2,32 @@ package com.github.mselivanov.portscanner;
 
 public class PortScanner {
 
-  private PortScannerEngine engine;
-  private PortScannerParameters parameters;
-  private ResultWriter writer;
-
-  public PortScanner(PortScannerParameters parameters) {
-    this.engine = new PortScannerEngine();
-    this.parameters = parameters;
-    this.writer = ResultWriterFactory.createResultWriter(parameters);
+  public static void main(String[] args) {
+    PortScanner scanner = new PortScanner();
+    scanner.run(args);
   }
 
-  public static void main(String[] args) {
+  public void run(String[] args) {
+    PortScannerEngine engine = new PortScannerEngine();
     PortScannerParser parser = new PortScannerParser();
     PortScannerParameters parameters;
     try {
       parameters = parser.parse(args);
-      PortScanner portScanner = new PortScanner(parameters);
-      PortScanResults results = portScanner.scan();
-      portScanner.writeResults(results);
+      ResultWriter writer = ResultWriterFactory.createResultWriter(parameters);
+      PortScanResults results = scan(engine, parameters);
+      writeResults(results, writer);
     } catch (ParametersParseException e) {
       parser.printHelp();
       System.exit(-1);
     }
   }
 
-  public PortScanResults scan() {
+  public PortScanResults scan(PortScannerEngine engine, PortScannerParameters parameters) {
     return engine.scan(parameters);
   }
 
-  public void writeResults(PortScanResults results) {
+  public void writeResults(PortScanResults results, ResultWriter writer) {
     writer.writeResults(results);
   }
+
 }
