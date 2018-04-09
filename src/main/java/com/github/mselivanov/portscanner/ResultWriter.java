@@ -15,21 +15,38 @@ public class ResultWriter {
     
     private PrintStream printStream;
 
+    /**
+     * Constructs ResultWriter object writitng results to @printStream
+     * @param printStream Stream to write results to
+     */
     public ResultWriter(PrintStream printStream) {
         this.printStream = printStream;
     }
 
-    public void writeResults(PortScanResults results) {
+  /**
+   * Write results using default output formatter
+   * @param results Results to write
+   */
+  public void writeResults(PortScanResults results) {
         writeResults(results, DEFAULT_FORMATTER);        
     }
-    
-    public void writeResults(PortScanResults results, OutputFormatter formatter) {
+
+  /**
+   *
+   * @param results Results to write
+   * @param formatter Formatter object to format output
+   */
+  public void writeResults(PortScanResults results, OutputFormatter formatter) {
         for(PortScanResult result: results) {
             printStream.println(formatter.format(result));
         }        
     }
 
-    public OutputStream getOutputStream() {
+  /**
+   *
+   * @return Stream ResultWriter writes results to
+   */
+  public OutputStream getOutputStream() {
         return printStream;
     }
 

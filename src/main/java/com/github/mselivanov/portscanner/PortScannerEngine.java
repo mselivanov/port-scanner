@@ -6,6 +6,11 @@ import java.io.IOException;
 
 public class PortScannerEngine {
 
+  /**
+   *
+   * @param parameters Parameters for port scan
+   * @return PortScanResults object containing collection of PortScanResult objects
+   */
   public PortScanResults scan(PortScannerParameters parameters) {
     int startPort = parameters.getStartPort();
     int endPort = parameters.getEndPort();

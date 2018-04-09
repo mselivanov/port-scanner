@@ -1,28 +1,20 @@
 package com.github.mselivanov.portscanner;
 
 import javax.sound.sampled.Port;
+import javax.xml.bind.ParseConversionEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 import java.net.InetAddress;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-public class PortScannerTest {
-
-  @Test
-  public void testPortScan() {
-    PortScannerParameters parameters = new PortScannerParameters();
-    PortScannerEngine engine = mock(PortScannerEngine.class);
-    ResultWriter writer = ResultWriterFactory.createResultWriter(parameters);
-    PortScanner portScanner = new PortScanner();
-    portScanner.scan(engine, parameters);
-    Mockito.verify(engine).scan(parameters);
-    Mockito.verifyNoMoreInteractions(engine);
-  }
+public class PortScannerTest extends PortScanner {
 
   @Test
   public void testWriteResults() {
@@ -37,10 +29,35 @@ public class PortScannerTest {
   }
 
   @Test
-  public void testRunScanner() {
+  public void testRunScanner() throws Exception {
     String[] args = {"--host", "www.google.com", "--startport", "80", "--endport", "81"};
-    PortScanner scanner = new PortScanner();
+    PortScannerParameters parameters = parseParameters(args);
+    PortScanResults results = new PortScanResults();
+    ResultWriter writer = ResultWriterFactory.createResultWriter(parameters);
+    PortScanner scanner = spy(new PortScanner());
+    scanner.engine = mock(PortScannerEngine.class);
+    Mockito.doReturn(parameters).when(scanner).parseParameters(args);
+    Mockito.doReturn(results).when(scanner.engine).scan(parameters);
+    Mockito.doReturn(writer).when(scanner).createWriter(parameters);
     scanner.run(args);
+    Mockito.verify(scanner.engine).scan(parameters);
+    Mockito.verify(scanner).writeResults(results, writer);
+  }
+
+  @Test
+  public void testParseParametersSuccessfullParse() throws Exception {
+    String[] args = {"--host", "www.google.com", "--startport", "80", "--endport", "81"};
+    PortScannerParameters parameters = parseParameters(args);
+    assertAll(
+        () -> assertEquals("www.google.com", parameters.getHost().getHostName()),
+        () -> assertEquals(80, parameters.getStartPort()),
+        () -> assertEquals(81, parameters.getEndPort()));
+  }
+
+  @Test
+  public void testParseParametersErrorOnParse() throws Exception {
+    String[] args = {"--host1", "www.google.com"};
+    assertThrows(ParametersParseException.class, () -> parseParameters(args));
   }
 
 }

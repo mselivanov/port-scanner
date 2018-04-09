@@ -1,6 +1,7 @@
 package com.github.mselivanov.portscanner;
 
 import static com.github.mselivanov.portscanner.PortScannerParameters.*;
+
 import java.net.UnknownHostException;
 import java.util.Optional;
 import java.nio.file.Paths;
@@ -16,66 +17,84 @@ import org.apache.commons.cli.ParseException;
 
 public class PortScannerParser {
 
-    private static final String USAGE_SYNTAX = "java PortScanner [-h|--host <host name or IP> ] " +
-                                               "[-sp|--startport <start port>] " +
-                                               "[-ep|--endport <end port>] " +
-                                               "[-t|--timeout <connection timeout in ms>] " +                                               
-                                               "[-f|--file <path to file to store results>]";
-    
-    private static Options createOptions() {
-        Options options = new Options();
-        Option host = new Option("h", "host", true, "Host");
-        host.setRequired(false);
-        options.addOption(host);
-        
-        Option startPort = new Option("sp", "startport", true, "Start port to scan");
-        startPort.setRequired(false);
-        options.addOption(startPort);
+  private static final String USAGE_SYNTAX = "java PortScanner [-h|--host <host name or IP> ] " +
+      "[-sp|--startport <start port>] " +
+      "[-ep|--endport <end port>] " +
+      "[-t|--timeout <connection timeout in ms>] " +
+      "[-f|--file <path to file to store results>]";
 
-        Option endPort = new Option("ep", "endport", true, "End port to scan");
-        endPort.setRequired(false);
-        options.addOption(endPort);
+  private static Options createOptions() {
+    Options options = new Options();
+    Option host = new Option("h", "host", true, "Host");
+    host.setRequired(false);
+    options.addOption(host);
 
-        Option file = new Option("f", "file", true, "File to output result of port scanning");
-        file.setRequired(false);
-        options.addOption(file);
-        
-        Option timeout = new Option("t", "timeout", true, "Connect attempt timeout");
-        timeout.setRequired(false);
-        options.addOption(timeout);
-        
-        return options;
-    } 
-    
-    private Options options;
-    
-    public PortScannerParser() {
-        options = createOptions();
+    Option startPort = new Option("sp", "startport", true, "Start port to scan");
+    startPort.setRequired(false);
+    options.addOption(startPort);
+
+    Option endPort = new Option("ep", "endport", true, "End port to scan");
+    endPort.setRequired(false);
+    options.addOption(endPort);
+
+    Option file = new Option("f", "file", true, "File to output result of port scanning");
+    file.setRequired(false);
+    options.addOption(file);
+
+    Option timeout = new Option("t", "timeout", true, "Connect attempt timeout");
+    timeout.setRequired(false);
+    options.addOption(timeout);
+
+    return options;
+  }
+
+  private Options options;
+
+  /**
+   * Creates parser with default set of options
+   */
+  public PortScannerParser() {
+    options = createOptions();
+  }
+
+  /**
+   * @param args Array of command line parameters. Array must contain
+   * parameter name, parameter value pairs
+   * @return PortScannerParameters object constructed from command line parameters
+   * @throws ParametersParseException Exception is thrown when parameters can't be parsed
+   */
+  public PortScannerParameters parse(String[] args) throws ParametersParseException {
+    CommandLineParser parser = new DefaultParser();
+    CommandLine cmd;
+    PortScannerParameters portScannerParameters = new PortScannerParameters();
+    try {
+      cmd = parser.parse(options, args);
+      portScannerParameters
+          .setStartPort(Integer.parseInt(cmd.getOptionValue("sp", "" + DEFAULT_START_PORT)));
+      portScannerParameters
+          .setEndPort(Integer.parseInt(cmd.getOptionValue("ep", "" + DEFAULT_END_PORT)));
+      portScannerParameters.setHost(
+          cmd.hasOption("h") ? InetAddress.getByName(cmd.getOptionValue("h")) : DEFAULT_HOST);
+      portScannerParameters
+          .setOutputDestination(cmd.hasOption("f") ? OutputDestination.FILE : DEFAULT_DESTINATION);
+      portScannerParameters.setOutputPath(
+          cmd.hasOption("f") ? Optional.of(Paths.get(cmd.getOptionValue("f"))) : DEFAULT_FILEPATH);
+      portScannerParameters.setTimeout(
+          cmd.hasOption("t") ? Integer.parseInt(cmd.getOptionValue("t")) : DEFAULT_TIMEOUT);
+    } catch (ParseException e) {
+      throw new ParametersParseException(e);
+    } catch (UnknownHostException e) {
+      throw new ParametersParseException(e);
     }
-    
-    public PortScannerParameters parse(String[] args) throws ParametersParseException {
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd; 
-        PortScannerParameters portScannerParameters = new PortScannerParameters();
-        try {
-            cmd = parser.parse(options, args);
-            portScannerParameters.setStartPort(Integer.parseInt(cmd.getOptionValue("sp", "" + DEFAULT_START_PORT)));
-            portScannerParameters.setEndPort(Integer.parseInt(cmd.getOptionValue("ep", "" + DEFAULT_END_PORT)));
-            portScannerParameters.setHost(cmd.hasOption("h") ? InetAddress.getByName(cmd.getOptionValue("h")): DEFAULT_HOST);
-            portScannerParameters.setOutputDestination(cmd.hasOption("f") ? OutputDestination.FILE : DEFAULT_DESTINATION);
-            portScannerParameters.setOutputPath(cmd.hasOption("f") ? Optional.of(Paths.get(cmd.getOptionValue("f"))) : DEFAULT_FILEPATH);            
-            portScannerParameters.setTimeout(cmd.hasOption("t") ? Integer.parseInt(cmd.getOptionValue("t")) : DEFAULT_TIMEOUT);
-        } catch(ParseException e) {
-            throw new ParametersParseException(e);
-        } catch(UnknownHostException e) {
-            throw new ParametersParseException(e);            
-        }
-        return portScannerParameters;
-    }
-    
-    public void printHelp() {
-        HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.printHelp(USAGE_SYNTAX, options);        
-    }
-    
+    return portScannerParameters;
+  }
+
+  /**
+   * Print help on application parameters
+   */
+  public void printHelp() {
+    HelpFormatter helpFormatter = new HelpFormatter();
+    helpFormatter.printHelp(USAGE_SYNTAX, options);
+  }
+
 }

@@ -2,19 +2,34 @@ package com.github.mselivanov.portscanner;
 
 public class PortScanner {
 
-  public static void main(String[] args) {
-    PortScanner scanner = new PortScanner();
-    scanner.run(args);
+  protected PortScannerEngine engine;
+  protected PortScannerParser parser;
+
+  public PortScanner() {
+    this(new PortScannerEngine(), new PortScannerParser());
   }
 
+  protected PortScanner(PortScannerEngine engine, PortScannerParser parser) {
+    this.engine = engine;
+    this.parser = parser;
+
+  }
+
+  /**
+   * @param args Command line arguments for running port scanner
+   */
+  public static void main(String[] args) {
+    new PortScanner().run(args);
+  }
+
+  /**
+   * @param args Command line arguments for running port scanner
+   */
   public void run(String[] args) {
-    PortScannerEngine engine = new PortScannerEngine();
-    PortScannerParser parser = new PortScannerParser();
-    PortScannerParameters parameters;
     try {
-      parameters = parser.parse(args);
-      ResultWriter writer = ResultWriterFactory.createResultWriter(parameters);
-      PortScanResults results = scan(engine, parameters);
+      PortScannerParameters parameters = parseParameters(args);
+      ResultWriter writer = createWriter(parameters);
+      PortScanResults results = engine.scan(parameters);
       writeResults(results, writer);
     } catch (ParametersParseException e) {
       parser.printHelp();
@@ -22,12 +37,17 @@ public class PortScanner {
     }
   }
 
-  public PortScanResults scan(PortScannerEngine engine, PortScannerParameters parameters) {
-    return engine.scan(parameters);
+  protected void writeResults(final PortScanResults results, final ResultWriter writer) {
+    writer.writeResults(results);
   }
 
-  public void writeResults(PortScanResults results, ResultWriter writer) {
-    writer.writeResults(results);
+  protected PortScannerParameters parseParameters(final String[] args)
+      throws ParametersParseException {
+    return parser.parse(args);
+  }
+
+  protected ResultWriter createWriter(PortScannerParameters parameters) {
+    return ResultWriterFactory.createResultWriter(parameters);
   }
 
 }
