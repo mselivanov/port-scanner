@@ -15,8 +15,8 @@ java com.github.mselivanov.portscanner.PortScanner
 
 Application uses by default:
 * localhost as host name
-* 0 as a start port
-* 65535 as an end range
+* 80 as a start port
+* 81 as an end port
 * console as an output destination
 
 ### Scan ports in a particular range of a host and outputs results to file

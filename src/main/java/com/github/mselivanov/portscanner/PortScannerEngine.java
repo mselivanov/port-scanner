@@ -19,6 +19,7 @@ public class PortScannerEngine {
       try (Socket socket = new Socket()) {
         socket.connect(new InetSocketAddress(parameters.getHost(), port), 500);
         psr.addResult(parameters.getHost(), port, PortScanStatus.OPEN);
+	socket.close();
       } catch (IOException e) {
         psr.addResult(parameters.getHost(), port, PortScanStatus.CLOSED);
       }

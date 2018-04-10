@@ -9,8 +9,8 @@ import java.util.Optional;
 public class PortScannerParameters {
 
   public static final String OUTPUT_FORMAT = "Host: %s\nPort range: %d - %d\nOutput to: %s\n";
-  public static final int DEFAULT_START_PORT = 0;
-  public static final int DEFAULT_END_PORT = 65535;
+  public static final int DEFAULT_START_PORT = 80;
+  public static final int DEFAULT_END_PORT = 81;
   public static final InetAddress DEFAULT_HOST = InetAddress.getLoopbackAddress();
   public static final OutputDestination DEFAULT_DESTINATION = OutputDestination.CONSOLE;
   public static final Optional<Path> DEFAULT_FILEPATH = Optional.empty();
